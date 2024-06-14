@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: my-django-app
+    env: python
+    plan: free
+    buildCommand: |
+      apt-get update && \
+      apt-get install -y gdal-bin libgdal-dev && \
+      pip install -r requirements.txt && \
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn your_project_name.wsgi --log-file -
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: GDAL_LIBRARY_PATH
+        value: /usr/lib/libgdal.so
+      - key: GEOS_LIBRARY_PATH
+        value: /usr/lib/libgeos_c.so
